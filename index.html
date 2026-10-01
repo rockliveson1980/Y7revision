@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 7 Unit 1: Four Operations - Interactive Review Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .option-card:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        .correct-card {
+            border-color: #10b981 !important;
+            background-color: #ecfdf5 !important;
+        }
+        .incorrect-card {
+            border-color: #ef4444 !important;
+            background-color: #fef2f2 !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-indigo-700 text-white shadow-lg py-6 px-4 mb-8">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold">Year 7 Maths: Four Operations Review</h1>
+                <p class="text-indigo-200 text-sm mt-1">Interactive Practice & Review Quiz</p>
+            </div>
+            <div class="flex items-center gap-4 bg-indigo-800 px-4 py-2 rounded-lg">
+                <span class="text-sm font-medium">Score: <span id="score-display" class="text-xl font-bold text-yellow-300">0</span> / <span id="total-display">0</span></span>
+                <button onclick="resetQuiz()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-1 px-3 rounded transition">
+                    Reset Quiz
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4">
+        
+        <!-- Navigation & Topics Bar -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6">
+            <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Jump to Topic Section</h2>
+            <div class="flex flex-wrap gap-2" id="topic-tags"></div>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="space-y-8"></div>
+
+        <!-- Finish Banner -->
+        <div id="results-card" class="hidden mt-8 p-6 bg-white rounded-xl shadow-md border border-indigo-100 text-center">
+            <h2 class="text-2xl font-bold text-indigo-900 mb-2">Quiz Completed!</h2>
+            <p class="text-slate-600 mb-4" id="results-summary"></p>
+            <button onclick="resetQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow transition">
+                Try Again
+            </button>
+        </div>
+    </main>
+
+    <script>
+        const quizData = [
+            {
+                topic: "Place Value & Ordering",
+                questions: [
+                    {
+                        id: "q1",
+                        question: "Write <strong>508,043</strong> in words.",
+                        options: [
+                            "Five hundred and eight thousand, forty-three",
+                            "Fifty-eight thousand and forty-three",
+                            "Five hundred and eight thousand, four hundred and three",
+                            "Five hundred thousand and eight, forty-three"
+                        ],
+                        answer: 0,
+                        explanation: "508,043 stands for 508 thousand (Five hundred and eight thousand) and 43 (forty-three)."
+                    },
+                    {
+                        id: "q2",
+                        question: "What is the value of the digit <strong>6</strong> in <strong>4,625,109</strong>?",
+                        options: [
+                            "600,000",
+                            "60,000",
+                            "6,000,000",
+                            "6,000"
+                        ],
+                        answer: 0,
+                        explanation: "The digit 6 is in the hundred thousands place, so its value is 600,000."
+                    },
+                    {
+                        id: "q3",
+                        question: "Arrange these numbers in <strong>ascending order</strong> (smallest to largest): <br><code class='bg-slate-100 px-2 py-1 rounded text-base mt-2 inline-block font-bold'>14, -8, 0, -15, 5</code>",
+                        options: [
+                            "-15, -8, 0, 5, 14",
+                            "-8, -15, 0, 5, 14",
+                            "0, -8, -15, 5, 14",
+                            "-15, -8, 0, 14, 5"
+                        ],
+                        answer: 0,
+                        explanation: "When ordering negative numbers, larger absolute values are smaller (e.g. -15 is less than -8)."
+                    },
+                    {
+                        id: "q4",
+                        question: "Which comparison symbol correctly fills the box? <br><div class='text-center text-xl font-bold my-3'>-9 &nbsp;&square;&nbsp; -4</div>",
+                        options: [
+                            "<",
+                            ">",
+                            "=",
+                            "&ge;"
+                        ],
+                        answer: 0,
+                        explanation: "-9 is further left on the number line than -4, so -9 < -4."
+                    }
+                ]
+            },
+            {
+                topic: "Integers & Inequalities",
+                questions: [
+                    {
+                        id: "q5",
+                        question: "What integer is <strong>6 less than 3</strong>?",
+                        options: [
+                            "-3",
+                            "-9",
+                            "3",
+                            "-2"
+                        ],
+                        answer: 0,
+                        explanation: "3 - 6 = -3."
+                    },
+                    {
+                        id: "q6",
+                        question: "The temperature is <strong>-5&deg;C</strong>. It rises by <strong>9&deg;C</strong>. What is the new temperature?",
+                        options: [
+                            "4&deg;C",
+                            "-14&deg;C",
+                            "14&deg;C",
+                            "-4&deg;C"
+                        ],
+                        answer: 0,
+                        explanation: "-5 + 9 = 4&deg;C."
+                    },
+                    {
+                        id: "q7",
+                        question: "Calculate: <strong>8 - 15</strong>",
+                        options: [
+                            "-7",
+                            "7",
+                            "-23",
+                            "23"
+                        ],
+                        answer: 0,
+                        explanation: "Subtracting 15 from 8 gives a negative result: -7."
+                    },
+                    {
+                        id: "q8",
+                        question: "A whole number <i>n</i> satisfies the inequality <strong>-3 &lt; <i>n</i> &le; 1</strong>. Write down all possible values of <i>n</i>.",
+                        options: [
+                            "-2, -1, 0, 1",
+                            "-3, -2, -1, 0, 1",
+                            "-2, -1, 0",
+                            "-3, -2, -1, 0"
+                        ],
+                        answer: 0,
+                        explanation: "-3 < n means n is strictly greater than -3 (excludes -3). n &le; 1 includes 1. The integers are -2, -1, 0, 1."
+                    }
+                ]
+            },
+            {
+                topic: "Addition & Subtraction",
+                questions: [
+                    {
+                        id: "q9",
+                        question: "Calculate: <strong>56,839 + 8,476</strong>",
+                        options: [
+                            "65,315",
+                            "64,315",
+                            "65,215",
+                            "64,215"
+                        ],
+                        answer: 0,
+                        explanation: "56,839 + 8,476 = 65,315."
+                    },
+                    {
+                        id: "q10",
+                        question: "Calculate: <strong>50,000 - 18,364</strong>",
+                        options: [
+                            "31,636",
+                            "32,636",
+                            "31,736",
+                            "32,736"
+                        ],
+                        answer: 0,
+                        explanation: "50,000 - 18,364 = 31,636."
+                    },
+                    {
+                        id: "q11",
+                        question: "A bank account has a balance of <strong>&pound;145</strong>. A payment of <strong>&pound;192</strong> is taken from the account. What is the new balance?",
+                        options: [
+                            "-&pound;47",
+                            "-&pound;57",
+                            "&pound;47",
+                            "-&pound;337"
+                        ],
+                        answer: 0,
+                        explanation: "145 - 192 = -47. The new balance is -&pound;47."
+                    }
+                ]
+            },
+            {
+                topic: "Multiplication & Division",
+                questions: [
+                    {
+                        id: "q12",
+                        question: "Calculate: <strong>248 &times; 35</strong>",
+                        options: [
+                            "8,680",
+                            "8,580",
+                            "7,680",
+                            "8,685"
+                        ],
+                        answer: 0,
+                        explanation: "248 &times; 30 = 7,440 and 248 &times; 5 = 1,240. Total = 8,680."
+                    },
+                    {
+                        id: "q13",
+                        question: "Calculate: <strong>5,184 &divide; 16</strong>",
+                        options: [
+                            "324",
+                            "314",
+                            "334",
+                            "328"
+                        ],
+                        answer: 0,
+                        explanation: "5,184 &divide; 16 = 324."
+                    },
+                    {
+                        id: "q14",
+                        question: "A factory packs 864 items into boxes of 32. How many complete boxes can be made?",
+                        options: [
+                            "27",
+                            "26",
+                            "28",
+                            "25"
+                        ],
+                        answer: 0,
+                        explanation: "864 &divide; 32 = 27 complete boxes."
+                    }
+                ]
+            },
+            {
+                topic: "Order of Operations (BIDMAS)",
+                questions: [
+                    {
+                        id: "q15",
+                        question: "Calculate: <strong>8 + 5 &times; 6</strong>",
+                        options: [
+                            "38",
+                            "78",
+                            "43",
+                            "53"
+                        ],
+                        answer: 0,
+                        explanation: "Multiplication before addition: 5 &times; 6 = 30, then 8 + 30 = 38."
+                    },
+                    {
+                        id: "q16",
+                        question: "Calculate: <strong>(24 - 8) &divide; 4</strong>",
+                        options: [
+                            "4",
+                            "22",
+                            "16",
+                            "2"
+                        ],
+                        answer: 0,
+                        explanation: "Brackets first: 24 - 8 = 16, then 16 &divide; 4 = 4."
+                    },
+                    {
+                        id: "q17",
+                        question: "Calculate: <strong>4<sup>2</sup> + 5 &times; 3</strong>",
+                        options: [
+                            "31",
+                            "63",
+                            "27",
+                            "48"
+                        ],
+                        answer: 0,
+                        explanation: "Indices first: 4<sup>2</sup> = 16. Then multiplication: 5 &times; 3 = 15. Add together: 16 + 15 = 31."
+                    },
+                    {
+                        id: "q18",
+                        question: "Insert one pair of brackets to make this statement true: <br><div class='text-center font-mono my-2 text-lg font-bold'>5 + 3 &times; 4 = 32</div>",
+                        options: [
+                            "(5 + 3) &times; 4 = 32",
+                            "5 + (3 &times; 4) = 32",
+                            "(5) + 3 &times; 4 = 32",
+                            "5 + (3) &times; 4 = 32"
+                        ],
+                        answer: 0,
+                        explanation: "(5 + 3) &times; 4 = 8 &times; 4 = 32."
+                    }
+                ]
+            },
+            {
+                topic: "Powers, Roots & Inverse Operations",
+                questions: [
+                    {
+                        id: "q19",
+                        question: "Write <strong>6 &times; 6 &times; 6 &times; 6</strong> in index (power) form.",
+                        options: [
+                            "6<sup>4</sup>",
+                            "4<sup>6</sup>",
+                            "6 &times; 4",
+                            "24"
+                        ],
+                        answer: 0,
+                        explanation: "6 multiplied by itself 4 times is written as 6<sup>4</sup>."
+                    },
+                    {
+                        id: "q20",
+                        question: "Evaluate: <strong>3<sup>4</sup></strong>",
+                        options: [
+                            "81",
+                            "12",
+                            "64",
+                            "27"
+                        ],
+                        answer: 0,
+                        explanation: "3 &times; 3 &times; 3 &times; 3 = 81."
+                    },
+                    {
+                        id: "q21",
+                        question: "Find: <strong>&radic;144</strong>",
+                        options: [
+                            "12",
+                            "14",
+                            "72",
+                            "11"
+                        ],
+                        answer: 0,
+                        explanation: "12 &times; 12 = 144, so &radic;144 = 12."
+                    },
+                    {
+                        id: "q22",
+                        question: "Complete the calculation using an inverse operation: <br><div class='text-center text-lg my-2 font-bold'>14 &times; &square; = 224</div>",
+                        options: [
+                            "16",
+                            "14",
+                            "18",
+                            "210"
+                        ],
+                        answer: 0,
+                        explanation: "Use inverse operation (division): 224 &divide; 14 = 16."
+                    }
+                ]
+            },
+            {
+                topic: "Unit Conversions",
+                questions: [
+                    {
+                        id: "q23",
+                        question: "Convert <strong>4.8 m</strong> to <strong>cm</strong>.",
+                        options: [
+                            "480 cm",
+                            "48 cm",
+                            "4800 cm",
+                            "0.48 cm"
+                        ],
+                        answer: 0,
+                        explanation: "Multiply by 100: 4.8 &times; 100 = 480 cm."
+                    },
+                    {
+                        id: "q24",
+                        question: "Convert <strong>3,250 g</strong> to <strong>kg</strong>.",
+                        options: [
+                            "3.25 kg",
+                            "32.5 kg",
+                            "0.325 kg",
+                            "325 kg"
+                        ],
+                        answer: 0,
+                        explanation: "Divide by 1000: 3,250 &divide; 1000 = 3.25 kg."
+                    },
+                    {
+                        id: "q25",
+                        question: "Convert <strong>3 hours 15 minutes</strong> to minutes.",
+                        options: [
+                            "195 minutes",
+                            "180 minutes",
+                            "315 minutes",
+                            "165 minutes"
+                        ],
+                        answer: 0,
+                        explanation: "3 hours = 3 &times; 60 = 180 mins. Plus 15 mins = 195 mins."
+                    }
+                ]
+            },
+            {
+                topic: "Scale & Measures",
+                questions: [
+                    {
+                        id: "q26",
+                        question: "A plan diagram uses a scale of <strong>1 : 40</strong>. <br>If a wall is <strong>6 cm</strong> on the plan, what is its actual length in <strong>metres</strong>?",
+                        options: [
+                            "2.4 m",
+                            "24 m",
+                            "240 m",
+                            "0.24 m"
+                        ],
+                        answer: 0,
+                        explanation: "Actual size in cm: 6 &times; 40 = 240 cm. Convert to metres: 240 &divide; 100 = 2.4 m."
+                    },
+                    {
+                        id: "q27",
+                        question: "A rectangular room drawing (scale 1 : 50) is <strong>6 cm long</strong> and <strong>3 cm wide</strong>. What is the <strong>actual perimeter</strong> of the room in metres?",
+                        options: [
+                            "9 m",
+                            "18 m",
+                            "4.5 m",
+                            "15 m"
+                        ],
+                        answer: 0,
+                        explanation: "Actual length = 6 &times; 50 = 300 cm = 3 m. Actual width = 3 &times; 50 = 150 cm = 1.5 m. Perimeter = 2 &times; (3 + 1.5) = 9 m."
+                    }
+                ]
+            },
+            {
+                topic: "Mixed Multi-Step Problems",
+                questions: [
+                    {
+                        id: "q28",
+                        question: "A school is taking <strong>215 students</strong> and <strong>17 teachers</strong> on an outing. Buses can carry <strong>54 people</strong> each. What is the <strong>minimum number of buses</strong> needed?",
+                        options: [
+                            "5 buses",
+                            "4 buses",
+                            "6 buses",
+                            "5.3 buses"
+                        ],
+                        answer: 0,
+                        explanation: "Total people = 215 + 17 = 232. Division: 232 &divide; 54 = 4.29. Round up to 5 full buses."
+                    },
+                    {
+                        id: "q29",
+                        question: "Referring to the bus question above: If each bus costs <strong>&pound;420</strong> to hire and the school has a budget of <strong>&pound;2,500</strong>, how much budget is left over after paying for 5 buses?",
+                        options: [
+                            "&pound;400",
+                            "&pound;2,100",
+                            "&pound;500",
+                            "&pound;380"
+                        ],
+                        answer: 0,
+                        explanation: "Total cost = 5 &times; &pound;420 = &pound;2,100. Money left = &pound;2,500 - &pound;2,100 = &pound;400."
+                    }
+                ]
+            }
+        ];
+
+        let answeredCount = 0;
+        let score = 0;
+        let totalQuestions = 0;
+
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            const topicTagsNav = document.getElementById('topic-tags');
+            container.innerHTML = '';
+            topicTagsNav.innerHTML = '';
+            
+            score = 0;
+            answeredCount = 0;
+            totalQuestions = 0;
+
+            quizData.forEach((section, sIndex) => {
+                totalQuestions += section.questions.length;
+
+                const tag = document.createElement('a');
+                tag.href = `#topic-${sIndex}`;
+                tag.className = "text-xs font-medium bg-slate-100 hover:bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full border border-slate-200 transition";
+                tag.textContent = section.topic;
+                topicTagsNav.appendChild(tag);
+
+                const sectionEl = document.createElement('div');
+                sectionEl.id = `topic-${sIndex}`;
+                sectionEl.className = "bg-white p-6 rounded-xl shadow-sm border border-slate-200";
+
+                let sectionHtml = `<h2 class="text-xl font-bold text-slate-800 pb-3 border-b border-slate-100 mb-6 flex items-center justify-between">
+                    <span>${section.topic}</span>
+                    <span class="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-1 rounded">${section.questions.length} Questions</span>
+                </h2>`;
+
+                sectionHtml += `<div class="space-y-6">`;
+
+                section.questions.forEach((q) => {
+                    sectionHtml += `
+                        <div class="p-4 rounded-lg bg-slate-50 border border-slate-200" id="card-${q.id}">
+                            <p class="font-medium text-slate-800 mb-3">${q.question}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+                                ${q.options.map((opt, oIdx) => `
+                                    <button onclick="checkAnswer('${q.id}', ${oIdx},${q.answer})" 
+                                            class="option-card option-btn-${q.id} text-left p-3 rounded-lg border border-slate-300 bg-white text-sm transition font-normal"
+                                            data-idx="${oIdx}">
+                                        ${opt}
+                                    </button>
+                                `).join('')}
+                            </div>
+                            <div id="feedback-${q.id}" class="hidden mt-3 p-3 text-sm rounded-lg"></div>
+                        </div>
+                    `;
+                });
+
+                sectionHtml += `</div>`;
+                sectionEl.innerHTML = sectionHtml;
+                container.appendChild(sectionEl);
+            });
+
+            document.getElementById('total-display').textContent = totalQuestions;
+            document.getElementById('score-display').textContent = "0";
+        }
+
+        function checkAnswer(qId, selectedIdx, correctIdx) {
+            const btns = document.querySelectorAll(`.option-btn-${qId}`);
+            const feedback = document.getElementById(`feedback-${qId}`);
+
+            let qData;
+            for (let section of quizData) {
+                let found = section.questions.find(q => q.id === qId);
+                if (found) { qData = found; break; }
+            }
+
+            btns.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.remove('option-card');
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                if (idx === correctIdx) {
+                    btn.classList.add('correct-card');
+                } else if (idx === selectedIdx && selectedIdx !== correctIdx) {
+                    btn.classList.add('incorrect-card');
+                }
+            });
+
+            answeredCount++;
+
+            if (selectedIdx === correctIdx) {
+                score++;
+                feedback.className = "mt-3 p-3 text-sm rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedback.innerHTML = `<strong>Correct!</strong> ${qData.explanation}`;
+            } else {
+                feedback.className = "mt-3 p-3 text-sm rounded-lg bg-rose-50 text-rose-800 border border-rose-200";
+                feedback.innerHTML = `<strong>Incorrect.</strong> ${qData.explanation}`;
+            }
+
+            feedback.classList.remove('hidden');
+            document.getElementById('score-display').textContent = score;
+
+            if (answeredCount === totalQuestions) {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const resultsCard = document.getElementById('results-card');
+            const summary = document.getElementById('results-summary');
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            summary.innerHTML = `You scored <strong>${score} out of ${totalQuestions}</strong> (${percentage}%).`;
+            resultsCard.classList.remove('hidden');
+            resultsCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetQuiz() {
+            document.getElementById('results-card').classList.add('hidden');
+            initQuiz();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
